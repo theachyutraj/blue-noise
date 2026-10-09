@@ -1,0 +1,44 @@
+# CMake build directory
+/build/
+/cmake-build-*/
+
+# Compiled binaries and libraries
+*.o
+*.obj
+*.a
+*.dylib
+*.so
+*.dll
+*.exe
+*.app
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+Makefile
+build.ninja
+.ninja_deps
+.ninja_log
+
+# VS Code local workspace state
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# macOS metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files and editor backups
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+
+# Generated experiment outputs
+/results/
+/white_noise.pgm
