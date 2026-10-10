@@ -16,3 +16,15 @@ add_executable(blue_noise
 target_include_directories(blue_noise PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+enable_testing()
+
+add_executable(image_tests
+    tests/image_tests.cpp
+)
+
+target_include_directories(image_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+add_test(NAME ImageTests COMMAND image_tests)
