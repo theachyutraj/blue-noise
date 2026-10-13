@@ -28,3 +28,13 @@ target_include_directories(image_tests PRIVATE
 )
 
 add_test(NAME ImageTests COMMAND image_tests)
+
+add_executable(random_tests
+    tests/random_tests.cpp
+)
+
+target_include_directories(random_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+add_test(NAME RandomTests COMMAND random_tests)
