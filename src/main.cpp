@@ -2,6 +2,7 @@
 #include "core/random.hpp"
 #include "visualization/pgm.hpp"
 #include "analysis/statistics.hpp"
+#include "analysis/spatial.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -23,6 +24,22 @@ int main()
     // Compute and print the mean and variance of the image.
     std::cout << "Mean: " << analysis::mean(image) << '\n';
     std::cout << "Variance: " << analysis::variance(image) << '\n';
+
+    // Compute and print the covariance at various offsets.
+    std::cout << "Covariance at (0, 0): "
+              << analysis::covariance(image, 0, 0) << '\n';
+
+    std::cout << "Covariance at (1, 0): "
+              << analysis::covariance(image, 1, 0) << '\n';
+
+    std::cout << "Covariance at (0, 1): "
+              << analysis::covariance(image, 0, 1) << '\n';
+
+    std::cout << "Covariance at (1, 1): "
+              << analysis::covariance(image, 1, 1) << '\n';
+
+    std::cout << "Covariance at (1, -1): "
+              << analysis::covariance(image, 1, -1) << '\n';
 
     // Compute and print the histogram with 10 bins.
     const auto bins = analysis::histogram(image, 10);
