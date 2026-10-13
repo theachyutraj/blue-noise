@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstddef>
 #include <stdexcept>
+#include <algorithm>
 #include <vector>
 
 namespace analysis
@@ -16,7 +17,7 @@ namespace analysis
         const std::size_t width = power.width();
         const std::size_t height = power.height();
 
-        // Maximum radius that fits inside the image dimensions.
+        // Maximum radius that fits within the centered spectrum.
         const std::size_t max_radius =
             std::min(width, height) / 2;
 
@@ -40,6 +41,9 @@ namespace analysis
                     std::round(std::hypot(
                         static_cast<double>(dx),
                         static_cast<double>(dy))));
+
+                if (radius > max_radius)
+                    continue;
 
                 sums[radius] += power.at(x, y);
                 ++counts[radius];
