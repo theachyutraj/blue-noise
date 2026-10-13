@@ -3,6 +3,7 @@
 #include "visualization/pgm.hpp"
 #include "analysis/statistics.hpp"
 #include "analysis/spatial.hpp"
+#include "analysis/fourier.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -65,5 +66,32 @@ int main()
     visualization::save_pgm(image, "white_noise.pgm");
 
     std::cout << "Saved white_noise.pgm\n";
+
+    // Compute the power spectrum and save it as a CSV file.
+    const auto power = analysis::power_spectrum(image);
+
+    std::ofstream spectrum_file("power_spectrum.csv");
+
+    if (!spectrum_file)
+    {
+        throw std::runtime_error("Could not create power_spectrum.csv");
+    }
+
+    for (std::size_t y = 0; y < power.height(); ++y)
+    {
+        for (std::size_t x = 0; x < power.width(); ++x)
+        {
+            if (x > 0)
+            {
+                spectrum_file << ',';
+            }
+
+            spectrum_file << power.at(x, y);
+        }
+
+        spectrum_file << '\n';
+    }
+
+    std::cout << "Saved power_spectrum.csv\n";
     return 0;
 }

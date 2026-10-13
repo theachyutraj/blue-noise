@@ -38,3 +38,8 @@ target_include_directories(random_tests PRIVATE
 )
 
 add_test(NAME RandomTests COMMAND random_tests)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(FFTW3 REQUIRED IMPORTED_TARGET fftw3)
+
+target_link_libraries(blue_noise PRIVATE PkgConfig::FFTW3)
