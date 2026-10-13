@@ -42,3 +42,5 @@ build.ninja
 # Generated experiment outputs
 /results/
 /white_noise.pgm
+*.csv
+*.pgm

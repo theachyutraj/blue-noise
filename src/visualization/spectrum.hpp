@@ -48,12 +48,8 @@ namespace visualization
         {
             for (std::size_t x = 0; x < width; ++x)
             {
-                // Move the zero-frequency component to the center.
-                const std::size_t source_x = (x + (width + 1) / 2) % width;
-                const std::size_t source_y = (y + (height + 1) / 2) % height;
-
                 const double log_power =
-                    std::log1p(power.at(source_x, source_y));
+                    std::log1p(power.at(x, y));
 
                 result.at(x, y) = static_cast<float>(
                     log_power / max_log_power);

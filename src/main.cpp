@@ -5,6 +5,7 @@
 #include "analysis/spatial.hpp"
 #include "analysis/fourier.hpp"
 #include "visualization/spectrum.hpp"
+#include "analysis/spectrum.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -95,11 +96,24 @@ int main()
 
     std::cout << "Saved power_spectrum.csv\n";
 
-    // Save the shifted and scaled power spectrum as a PGM image.
-    const auto spectrum = visualization::spectrum_image(power);
+    // Compute the centered power spectrum.
+    const auto centered_power = analysis::center_spectrum(power);
+
+    // Save the log-scaled power spectrum as a PGM image.
+    const auto spectrum = visualization::spectrum_image(centered_power);
     visualization::save_pgm(spectrum, "power_spectrum.pgm");
 
     std::cout << "Saved power_spectrum.pgm\n";
+
+    const auto radial = analysis::radial_power_spectrum(centered_power);
+    std::ofstream radial_file("radial_power.csv");
+
+    for (std::size_t r = 0; r < radial.size(); ++r)
+    {
+        radial_file << r << ',' << radial[r] << '\n';
+    }
+
+    std::cout << "Saved radial_power.csv\n";
 
     return 0;
 }
