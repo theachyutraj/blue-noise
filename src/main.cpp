@@ -4,6 +4,7 @@
 #include "analysis/statistics.hpp"
 #include "analysis/spatial.hpp"
 #include "analysis/fourier.hpp"
+#include "visualization/spectrum.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -93,5 +94,12 @@ int main()
     }
 
     std::cout << "Saved power_spectrum.csv\n";
+
+    // Save the shifted and scaled power spectrum as a PGM image.
+    const auto spectrum = visualization::spectrum_image(power);
+    visualization::save_pgm(spectrum, "power_spectrum.pgm");
+
+    std::cout << "Saved power_spectrum.pgm\n";
+
     return 0;
 }
