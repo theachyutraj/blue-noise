@@ -41,8 +41,20 @@ int main()
     std::cout << "Covariance at (1, -1): "
               << analysis::covariance(image, 1, -1) << '\n';
 
+    // Compute and print the radial covariance profile up to a radius of 10 pixels.
+    const auto profile = analysis::radial_covariance(image, 10);
+
+    std::cout << "\nRadial covariance:\n";
+
+    for (std::size_t r = 0; r < profile.size(); ++r)
+    {
+        std::cout << r << ", " << profile[r] << '\n';
+    }
+
     // Compute and print the histogram with 10 bins.
     const auto bins = analysis::histogram(image, 10);
+
+    std::cout << "\nHistogram:\n";
 
     for (std::size_t i = 0; i < bins.size(); ++i)
     {
