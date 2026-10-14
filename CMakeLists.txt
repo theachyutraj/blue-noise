@@ -12,7 +12,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(blue_noise
     src/main.cpp
 )
-
 target_include_directories(blue_noise PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
@@ -22,24 +21,26 @@ enable_testing()
 add_executable(image_tests
     tests/image_tests.cpp
 )
-
 target_include_directories(image_tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-
 add_test(NAME ImageTests COMMAND image_tests)
 
 add_executable(random_tests
     tests/random_tests.cpp
 )
-
 target_include_directories(random_tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-
 add_test(NAME RandomTests COMMAND random_tests)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FFTW3 REQUIRED IMPORTED_TARGET fftw3)
-
 target_link_libraries(blue_noise PRIVATE PkgConfig::FFTW3)
+
+add_executable(density_tests tests/density_tests.cpp)
+target_include_directories(density_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+)
+target_link_libraries(density_tests PRIVATE PkgConfig::FFTW3)
+add_test(NAME density_tests COMMAND density_tests)
