@@ -44,3 +44,10 @@ target_include_directories(density_tests PRIVATE
 )
 target_link_libraries(density_tests PRIVATE PkgConfig::FFTW3)
 add_test(NAME density_tests COMMAND density_tests)
+
+add_executable(void_cluster_tests tests/void_cluster_tests.cpp)
+target_include_directories(void_cluster_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+)
+target_link_libraries(void_cluster_tests PRIVATE PkgConfig::FFTW3)
+add_test(NAME void_cluster_tests COMMAND void_cluster_tests)
