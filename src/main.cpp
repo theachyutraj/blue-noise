@@ -6,24 +6,15 @@
 #include "analysis/fourier.hpp"
 #include "visualization/spectrum.hpp"
 #include "analysis/spectrum.hpp"
+#include "generation/void_cluster.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 
-int main()
+void print_stats(const Image2D<float> &image, std::size_t radius = 10)
 {
-    const std::size_t width = 256;
-    const std::size_t height = 256;
-
-    Image2D<float> image(width, height, 0.0f);
-    Random rng(42);
-
-    // Fill the image with random values in the range [0, 1].
-    for (std::size_t y = 0; y < height; y++)
-        for (std::size_t x = 0; x < width; x++)
-            image.at(x, y) = rng.uniform();
-
+    std::cout << "Image dimensions: " << image.width() << " x " << image.height() << '\n';
     // Compute and print the mean and variance of the image.
     std::cout << "Mean: " << analysis::mean(image) << '\n';
     std::cout << "Variance: " << analysis::variance(image) << '\n';
@@ -44,8 +35,8 @@ int main()
     std::cout << "Covariance at (1, -1): "
               << analysis::covariance(image, 1, -1) << '\n';
 
-    // Compute and print the radial covariance profile up to a radius of 10 pixels.
-    const auto profile = analysis::radial_covariance(image, 10);
+    // Compute and print the radial covariance profile up to a radius (of 10 pixels).
+    const auto profile = analysis::radial_covariance(image, radius);
 
     std::cout << "\nRadial covariance:\n";
 
@@ -63,16 +54,15 @@ int main()
     {
         std::cout << "Bin " << i << ": " << bins[i] << '\n';
     }
+}
 
-    // Save the image as a PGM file.
-    visualization::save_pgm(image, "white_noise.pgm");
-
-    std::cout << "Saved white_noise.pgm\n";
+void spectral_analysis(Image2D<float> &image, const std::string &experiment_path)
+{
 
     // Compute the power spectrum and save it as a CSV file.
     const auto power = analysis::power_spectrum(image);
 
-    std::ofstream spectrum_file("power_spectrum.csv");
+    std::ofstream spectrum_file(experiment_path + "/power_spectrum.csv");
 
     if (!spectrum_file)
     {
@@ -101,19 +91,92 @@ int main()
 
     // Save the log-scaled power spectrum as a PGM image.
     const auto spectrum = visualization::spectrum_image(centered_power);
-    visualization::save_pgm(spectrum, "power_spectrum.pgm");
+    visualization::save_pgm(spectrum, experiment_path + "/power_spectrum.pgm");
 
-    std::cout << "Saved power_spectrum.pgm\n";
+    std::cout << "Saved " << experiment_path << "/power_spectrum.pgm\n";
 
     const auto radial = analysis::radial_power_spectrum(centered_power);
-    std::ofstream radial_file("radial_power.csv");
+    std::ofstream radial_file(experiment_path + "/radial_power.csv");
 
     for (std::size_t r = 0; r < radial.size(); ++r)
     {
         radial_file << r << ',' << radial[r] << '\n';
     }
 
-    std::cout << "Saved radial_power.csv\n";
+    std::cout << "Saved " << experiment_path << "/radial_power.csv\n";
+}
 
+void white_noise_experiment()
+{
+    std::string experiment_path = "experiments/white_noise";
+
+    // Create the output directory if it doesn't exist.
+    std::filesystem::create_directories(experiment_path);
+
+    std::size_t width = 256;
+    std::size_t height = 256;
+    Image2D<float> image(width, height, 0.0f);
+    Random rng(42); // Fixed seed for reproducibility.
+
+    // Fill the image with random values in the range [0, 1].
+    for (std::size_t y = 0; y < height; y++)
+        for (std::size_t x = 0; x < width; x++)
+            image.at(x, y) = rng.uniform();
+
+    print_stats(image);
+
+    // Save the image as a PGM file.
+    visualization::save_pgm(image, experiment_path + "/white_noise.pgm");
+
+    std::cout << "Saved " << experiment_path << "/white_noise.pgm\n";
+
+    // Compute the radial power spectrum and save it to a CSV file.
+    spectral_analysis(image, experiment_path);
+}
+
+void blue_noise_experiment0()
+{
+    std::size_t width = 64;
+    std::size_t height = 64;
+    Random rng(42); // Fixed seed for reproducibility.
+
+    std::string experiment_path = "experiments/blue_noise";
+
+    // Create the output directory if it doesn't exist.
+    std::filesystem::create_directories(experiment_path);
+
+    std::cout << "--------------------------------\n";
+    std::cout << "Blue Noise Experiment 0\n";
+    std::cout << "--------------------------------\n";
+
+    // Fill the image with blue noise using a void-and-cluster algorithm.
+    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, rng.uniform_int(0, 1000000), 2.0f, 6);
+
+    // Normalize the ranks to [0, 1] for visualization.
+    Image2D<float> image(width, height, 0.0f);
+    const float max_rank = static_cast<float>(width * height - 1);
+
+    for (std::size_t y = 0; y < height; ++y)
+    {
+        for (std::size_t x = 0; x < width; ++x)
+        {
+            // Normalize the rank to [0, 1].
+            image.at(x, y) = static_cast<float>(ranks.at(x, y)) / max_rank;
+        }
+    }
+
+    // Save the image as a PGM file.
+    visualization::save_pgm(image, experiment_path + "/mask.pgm");
+
+    print_stats(image, 4);
+    spectral_analysis(image, experiment_path);
+
+    std::cout << "Saved " << experiment_path << "/mask.pgm\n";
+}
+
+int main()
+{
+    // white_noise_experiment();
+    blue_noise_experiment0();
     return 0;
 }

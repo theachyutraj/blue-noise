@@ -1,10 +1,14 @@
 import csv
+import sys
+from pathlib import Path
 import matplotlib.pyplot as plt
+
+experiment_path = "experiments" / Path(sys.argv[1])
 
 radii = []
 powers = []
 
-with open("radial_power.csv", newline="") as file:
+with open(experiment_path / "radial_power.csv", newline="") as file:
     reader = csv.reader(file)
 
     for row in reader:
@@ -14,8 +18,8 @@ with open("radial_power.csv", newline="") as file:
 plt.plot(radii, powers)
 plt.xlabel("Spatial frequency radius (bins)")
 plt.ylabel("Mean power")
-plt.title("Radial Power Spectrum — White Noise")
+plt.title("Radial Power Spectrum - " + sys.argv[1])
 plt.grid(True)
 plt.tight_layout()
-plt.savefig("radial_power.png", dpi=150)
+plt.savefig(experiment_path / "radial_power.png", dpi=150)
 plt.show()
