@@ -138,7 +138,6 @@ void blue_noise_experiment0()
 {
     std::size_t width = 64;
     std::size_t height = 64;
-    Random rng(42); // Fixed seed for reproducibility.
 
     std::string experiment_path = "experiments/blue_noise";
 
@@ -150,7 +149,7 @@ void blue_noise_experiment0()
     std::cout << "--------------------------------\n";
 
     // Fill the image with blue noise using a void-and-cluster algorithm.
-    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, rng.uniform_int(0, 1000000), 2.0f, 6);
+    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, 42, 2.0f, 6);
 
     // Normalize the ranks to [0, 1] for visualization.
     Image2D<float> image(width, height, 0.0f);
@@ -168,8 +167,61 @@ void blue_noise_experiment0()
     // Save the image as a PGM file.
     visualization::save_pgm(image, experiment_path + "/mask.pgm");
 
-    print_stats(image, 4);
+    // print_stats(image, 4);
     spectral_analysis(image, experiment_path);
+
+    std::cout << "Saved " << experiment_path << "/mask.pgm\n";
+}
+
+void blue_noise_experiment1()
+{
+    std::size_t width = 64;
+    std::size_t height = 64;
+
+    std::string experiment_path = "experiments/blue_noise_binary";
+
+    // Create the output directory if it doesn't exist.
+    std::filesystem::create_directories(experiment_path);
+
+    std::cout << "--------------------------------\n";
+    std::cout << "Blue Noise Experiment 1\n";
+    std::cout << "--------------------------------\n";
+
+    // Fill the image with blue noise using a void-and-cluster algorithm.
+    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, 42, 2.0f, 6);
+
+    // Normalize the ranks to [0, 1] for visualization.
+    Image2D<float> image(width, height, 0.0f);
+    const float max_rank = static_cast<float>(width * height - 1);
+
+    for (std::size_t y = 0; y < height; ++y)
+    {
+        for (std::size_t x = 0; x < width; ++x)
+        {
+            // Normalize the rank to [0, 1].
+            image.at(x, y) = static_cast<float>(ranks.at(x, y)) / max_rank;
+        }
+    }
+
+    Image2D<float> binary(width, height, 0.0f);
+
+    const float threshold = 0.1f;
+
+    for (std::size_t y = 0; y < height; ++y)
+    {
+        for (std::size_t x = 0; x < width; ++x)
+        {
+            binary.at(x, y) = image.at(x, y) < threshold ? 1.0f : 0.0f;
+        }
+    }
+
+    // Save the image as a PGM file.
+    visualization::save_pgm(image, experiment_path + "/mask.pgm");
+    visualization::save_pgm(binary, experiment_path + "/mask_binary.pgm");
+
+    // print_stats(image, 4);
+    // spectral_analysis(image, experiment_path);
+    spectral_analysis(binary, experiment_path);
 
     std::cout << "Saved " << experiment_path << "/mask.pgm\n";
 }
@@ -178,5 +230,6 @@ int main()
 {
     // white_noise_experiment();
     blue_noise_experiment0();
+    blue_noise_experiment1();
     return 0;
 }
