@@ -51,3 +51,10 @@ target_include_directories(void_cluster_tests PRIVATE
 )
 target_link_libraries(void_cluster_tests PRIVATE PkgConfig::FFTW3)
 add_test(NAME void_cluster_tests COMMAND void_cluster_tests)
+
+add_executable(generation_tests tests/generation_tests.cpp)
+target_include_directories(generation_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+)
+target_link_libraries(generation_tests PRIVATE PkgConfig::FFTW3)
+add_test(NAME generation_tests COMMAND generation_tests)
