@@ -175,8 +175,8 @@ void blue_noise_experiment0()
 
 void blue_noise_experiment1()
 {
-    std::size_t width = 64;
-    std::size_t height = 64;
+    std::size_t width = 256;
+    std::size_t height = 256;
 
     std::string experiment_path = "experiments/blue_noise_binary";
 
@@ -188,7 +188,7 @@ void blue_noise_experiment1()
     std::cout << "--------------------------------\n";
 
     // Fill the image with blue noise using a void-and-cluster algorithm.
-    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, 42, 2.0f, 32);
+    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, 42, 2.0f, 8);
 
     // Normalize the ranks to [0, 1] for visualization.
     Image2D<float> image(width, height, 0.0f);
