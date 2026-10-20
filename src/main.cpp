@@ -188,7 +188,7 @@ void blue_noise_experiment1()
     std::cout << "--------------------------------\n";
 
     // Fill the image with blue noise using a void-and-cluster algorithm.
-    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, 42, 2.0f, 6);
+    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, 42, 2.0f, 32);
 
     // Normalize the ranks to [0, 1] for visualization.
     Image2D<float> image(width, height, 0.0f);
@@ -229,7 +229,7 @@ void blue_noise_experiment1()
 int main()
 {
     // white_noise_experiment();
-    blue_noise_experiment0();
+    // blue_noise_experiment0();
     blue_noise_experiment1();
     return 0;
 }

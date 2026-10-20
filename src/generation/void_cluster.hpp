@@ -105,7 +105,7 @@ namespace generation
         std::size_t height,
         std::uint32_t seed,
         float sigma = 2.0f,
-        int radius = 6)
+        int radius = 8)
     {
         // Image2D validates that the dimensions and area are valid.
         Image2D<float> mask(width, height, 0.0f);
@@ -160,11 +160,12 @@ namespace generation
         Image2D<int> ranks(width, height, -1);
 
         // Phase 1: remove clusters and assign high ranks.
+        // Assign ranks from count/2-1 to 0
         // Keep one occupied pixel as the seed for void filling.
         std::size_t occupied = occupied_target;
-        int next_cluster_rank = static_cast<int>(count) - 1;
+        int next_cluster_rank = static_cast<int>(count) / 2 - 1;
 
-        while (occupied > 1)
+        while (occupied > 0)
         {
             const auto cluster =
                 analysis::find_cluster(mask, density);
@@ -180,20 +181,20 @@ namespace generation
         }
 
         // The remaining seed receives the middle rank.
-        bool seed_found = false;
+        // bool seed_found = false;
 
-        for (std::size_t y = 0; y < height && !seed_found; ++y)
-        {
-            for (std::size_t x = 0; x < width; ++x)
-            {
-                if (mask.at(x, y) > 0.5f)
-                {
-                    ranks.at(x, y) = static_cast<int>(occupied_target);
-                    seed_found = true;
-                    break;
-                }
-            }
-        }
+        // for (std::size_t y = 0; y < height && !seed_found; ++y)
+        // {
+        //     for (std::size_t x = 0; x < width; ++x)
+        //     {
+        //         if (mask.at(x, y) > 0.5f)
+        //         {
+        //             ranks.at(x, y) = static_cast<int>(occupied_target);
+        //             seed_found = true;
+        //             break;
+        //         }
+        //     }
+        // }
 
         // Reset the mask and density to original state for void filling.
         for (std::size_t i = 0; i < occupied_target; ++i)
@@ -205,9 +206,9 @@ namespace generation
         density = analysis::gaussian_density(mask, sigma, radius);
 
         // Phase 2: fill voids and assign low ranks.
-        int next_void_rank = 0;
+        int next_void_rank = occupied_target; // Start from the middle rank.
 
-        while (next_void_rank < occupied_target)
+        while (next_void_rank < count)
         {
             const auto void_pixel =
                 analysis::find_void(mask, density);
