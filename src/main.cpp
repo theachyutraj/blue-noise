@@ -178,17 +178,17 @@ void blue_noise_experiment1()
     std::size_t width = 256;
     std::size_t height = 256;
 
-    std::string experiment_path = "experiments/blue_noise_binary";
+    std::string experiment_path = "experiments/blue_noise";
 
     // Create the output directory if it doesn't exist.
     std::filesystem::create_directories(experiment_path);
 
     std::cout << "--------------------------------\n";
-    std::cout << "Blue Noise Experiment 1\n";
+    std::cout << "Blue Noise Experiment 4\n";
     std::cout << "--------------------------------\n";
 
     // Fill the image with blue noise using a void-and-cluster algorithm.
-    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, 42, 2.0f, 8);
+    Image2D<int> ranks = generation::make_void_cluster_rank_mask(width, height, 42, 1.5f, 6);
 
     // Normalize the ranks to [0, 1] for visualization.
     Image2D<float> image(width, height, 0.0f);
@@ -217,11 +217,11 @@ void blue_noise_experiment1()
 
     // Save the image as a PGM file.
     visualization::save_pgm(image, experiment_path + "/mask.pgm");
-    visualization::save_pgm(binary, experiment_path + "/mask_binary.pgm");
+    // visualization::save_pgm(binary, experiment_path + "/mask_binary.pgm");
 
     // print_stats(image, 4);
     // spectral_analysis(image, experiment_path);
-    spectral_analysis(binary, experiment_path);
+    spectral_analysis(image, experiment_path);
 
     std::cout << "Saved " << experiment_path << "/mask.pgm\n";
 }
